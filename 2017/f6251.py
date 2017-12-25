@@ -1,10 +1,11 @@
 from form import Form, FilingStatus
+from f1040sd import F1040sd
 
 class F6251(Form):
     """Form 6251, Alternative Minimum Tax"""
-    EXEMPTIONS = [53900, 83800, 41900, 53900, 83800]
-    EXEMPT_LIMITS = [119700, 159700, 79850, 119700, 159700]
-    RATE_CHANGE = [186300, 186300, 93150, 186300, 186300]
+    EXEMPTIONS = [54300, 84500, 42250, 54300, 84500]
+    EXEMPT_LIMITS = [120700, 160900, 80450, 120700, 160900]
+    RATE_CHANGE = [187800, 187800, 93900, 187800, 187800]
     def __init__(f, inputs, f1040, sched_a, sched_d):
         super(F6251, f).__init__(inputs)
         if sched_a:
@@ -20,6 +21,13 @@ class F6251(Form):
         if '10' in f1040:
             # TODO: refunds from 1040, line 21
             f['7'] = -f1040['10']
+
+        amt_cap_gain_s = inputs.get('amt_capital_gain_short', inputs.get('capital_gain_short'))
+        amt_cap_gain_l = inputs.get('amt_capital_gain_long', inputs.get('capital_gain_long'))
+        amt_cap_gain_d = inputs.get('amt_capital_gain_dist', inputs.get('capital_gain_dist'))
+
+        f.comment['17'] = "Adjustment of property disposition for AMT cost basis"
+        f['17'] = amt_cap_gain_s - inputs.get('capital_gain_short') + amt_cap_gain_l - inputs.get('capital_gain_long')
 
         if (f.rowsum([str(i) for i in xrange(8,28)]) or 0) < 0:
             f.must_file = True
@@ -42,16 +50,28 @@ class F6251(Form):
             f['34'] = f1040['44'] + f1040['46'] - f1040['48']
             return
 
-        # TODO: capital gains refigured for the AMT
         # TODO: form 2555
         if (f1040['13'] and not sched_d.mustFile()) or f1040['9b'] or \
                 (sched_d['15'] > 0 and sched_d['16'] > 0):
             f['36'] = f['30']
             assert(not sched_d['18'] and not sched_d['19'])
             cg_worksheet = f1040.div_cap_gain_tax_worksheet(inputs, sched_d)
-            f['37'] = cg_worksheet['6']
-            f['38'] = sched_d.get('19')
-            f['39'] = f['37']
+
+            # schedule D reconfigured for AMT
+            amt_sd_inputs = inputs
+            amt_sd_inputs['capital_gain_short'] = amt_cap_gain_s
+            amt_sd_inputs['capital_gain_long'] = amt_cap_gain_l
+            amt_sd_inputs['capital_gain_dist'] = amt_cap_gain_d
+            amt_sd = F1040sd(amt_sd_inputs)
+            f.addForm(amt_sd)
+
+            # capital gains and dividends reconfigured for AMT
+            amt_cg_worksheet = f1040.div_cap_gain_tax_worksheet(amt_sd_inputs, amt_sd)
+
+            f.comment['37'] = "capital gains reconfigured for amt"
+            f['37'] = amt_cg_worksheet['6']
+            f['38'] = amt_sd.get('19')
+            f['39'] = f['37'] + f['38']
             f['40'] = min(f['36'], f['39'])
             f['41'] = f['36'] - f['40']
             f['42'] = f.amt(inputs['status'], f['41'])
