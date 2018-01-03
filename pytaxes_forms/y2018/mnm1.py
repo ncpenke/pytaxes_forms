@@ -74,4 +74,4 @@ class MNm1(Form):
         return tax
 
     def title(self):
-        return '2017 Form M1, Individual Income Tax'
+        return '2018 Form M1, Individual Income Tax'

@@ -125,7 +125,6 @@ class F6251(Form):
         w['5'] = w['4'] * .25
         w['6'] = max(w['1'] - w['5'], 0)
         # TODO: certain children under age 24
-        print w
         return w['6']
 
     def amt(f, status, val):

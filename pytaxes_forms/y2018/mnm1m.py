@@ -79,4 +79,4 @@ class MNm1m(Form):
         f['44'] = 0
 
     def title(self):
-        return '2017 Schedule M1M, Income Additions and Subtractions'
+        return '2018 Schedule M1M, Income Additions and Subtractions'

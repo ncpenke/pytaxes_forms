@@ -197,9 +197,6 @@ class F1040(Form):
             f.comment['78'] = 'Amount you owe'
             f['78'] = f['63'] - f['74']
 
-        #f8801_2017 = F8801_2017(inputs, f, f6251, f8801, sd)
-        #f.addForm(f8801_2017)
-
     def div_cap_gain_tax_worksheet(f, inputs, sched_d):
         w = {}
         w['1'] = f['43']
