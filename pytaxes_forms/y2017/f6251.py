@@ -22,6 +22,9 @@ class F6251(Form):
             # TODO: refunds from 1040, line 21
             f['7'] = -f1040['10']
 
+        f.comments['14'] = "Exercise of incentive stock options"
+        f['14'] = inputs.get('amt_iso_exercise')
+
         amt_cap_gain_s = inputs.get('amt_capital_gain_short', inputs.get('capital_gain_short'))
         amt_cap_gain_l = inputs.get('amt_capital_gain_long', inputs.get('capital_gain_long'))
         amt_cap_gain_d = inputs.get('amt_capital_gain_dist', inputs.get('capital_gain_dist'))
