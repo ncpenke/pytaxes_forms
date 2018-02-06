@@ -11,8 +11,7 @@ class F1040sa(Form):
             f['3'] = f['2'] * .10
             f['4'] = max(0, f['1'] - f['3'])
         f['5'] = inputs['state_withholding'] + \
-                 inputs.get('state_estimated_payments', 0) + \
-                 inputs.get('extra_state_tax_payments', 0)
+                 inputs.get('estimated_state_tax_payments', 0)
         f['9'] = f.rowsum(['5', '6', '7', '8'])
         f['15'] = f.rowsum(['10', '11', '12', '13', '14'])
         f['19'] = f.rowsum(['16', '17', '18'])

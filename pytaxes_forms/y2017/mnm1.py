@@ -42,7 +42,7 @@ class MNm1(Form):
         # TODO: Tax on lump-sum distribution
         # TODO: M1CR and M!RCR
         f['23'] = inputs.get('state_withholding') 
-        f['24'] = inputs.get('state_estimated_payments')
+        f['24'] = inputs.get('estimated_state_tax_payments') + inputs.get('extra_estimated_state_tax_payments')
         f['27'] = f.rowsum(['23', '24'])
         if f['27'] > f['22']:
             f.comment['28'] = 'MN refund'
