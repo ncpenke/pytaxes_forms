@@ -27,7 +27,6 @@ class F6251(Form):
 
         amt_cap_gain_s = inputs.get('amt_capital_gain_short', inputs.get('capital_gain_short'))
         amt_cap_gain_l = inputs.get('amt_capital_gain_long', inputs.get('capital_gain_long'))
-        amt_cap_gain_d = inputs.get('amt_capital_gain_dist', inputs.get('capital_gain_dist'))
 
         f.comment['17'] = "Adjustment of property disposition for AMT cost basis"
         f['17'] = amt_cap_gain_s - inputs.get('capital_gain_short') + amt_cap_gain_l - inputs.get('capital_gain_long')
@@ -64,7 +63,6 @@ class F6251(Form):
             amt_sd_inputs = inputs
             amt_sd_inputs['capital_gain_short'] = amt_cap_gain_s
             amt_sd_inputs['capital_gain_long'] = amt_cap_gain_l
-            amt_sd_inputs['capital_gain_dist'] = amt_cap_gain_d
             amt_sd = F1040sd(amt_sd_inputs)
             f.addForm(amt_sd)
 

@@ -9,13 +9,13 @@ class CA540(Form):
     DEPENDENT_EXEMPTION = 344
     BRACKET_RATES = [.01, .02, .04, .06, .08, .093, .103, .113, .123]
     BRACKET_LIMITS = [
-        [8015, 19001, 29989, 41629, 52612, 268750, 322499, 537498],   # SINGLE
-        [16030, 38002, 59978, 83258, 105224, 537500, 644998, 1074996],# JOINT
-        [8015, 19001, 29989, 41629, 52612, 268750, 322499, 537498],   # SEPARATE
-        [16040, 38003, 48990, 60630, 71615, 365499, 438599, 730997],  # HEAD
-        [16030, 38002, 59978, 83258, 105224, 537500, 644998, 1074996],# WIDOW
+        [8223, 19495, 30769, 42711, 53980, 275738, 330884, 551473],   # SINGLE
+        [16446, 38990, 61538, 85422, 107960, 551476, 661768, 1102946],# JOINT
+        [8223, 19495, 30769, 42711, 53980, 275738, 330884, 551473],   # SEPARATE
+        [16457, 38991, 50264, 62206, 73477, 375002, 450003, 750003],  # HEAD
+        [16446, 38990, 61538, 85422, 107960, 551476, 661768, 1102946],# WIDOW
     ]
-    SDI_MAX = 960.68
+    SDI_MAX = 998.19
     MENTAL_HEALTH_LIMIT = 1000000
     MENTAL_HEALTH_RATE = .01
 
@@ -38,7 +38,7 @@ class CA540(Form):
         f['10'] = (inputs['exemptions'] - personal) * f.DEPENDENT_EXEMPTION
         f['11'] = f.rowsum(['7', '8', '9', '10'])
 
-        f['12'] = f.spouseSum(inputs, 'wages')
+        f['12'] = f.spouseSum(inputs, 'wages_state')
         f.comment['13'] = 'Federal AGI'
         f['13'] = f1040['37']
         sca = f.addForm(CA540sca(inputs, f1040, f1040sa))
@@ -57,10 +57,14 @@ class CA540(Form):
         f['33'] = max(0, f['31'] - f['32'])
         f['35'] = f['33'] + f['34']
 
+        sp = f.addForm(CA540sp(inputs, f, sca, f1040, f1040sa))
+        f['43'] = sp.credits(inputs, f)
+
+        f.comment['47'] = "Total credits"
         f['47'] = f.rowsum(['40', '43', '44', '45', '46'])
         f['48'] = max(0, f['35'] - f['47'])
 
-        sp = f.addForm(CA540sp(inputs, f, sca, f1040, f1040sa))
+        f.comment['61'] = 'AMT'
         f['61'] = sp.get('26')
 
         if f['19'] > f.MENTAL_HEALTH_LIMIT:
