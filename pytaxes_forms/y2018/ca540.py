@@ -23,10 +23,7 @@ class CA540(Form):
         super(CA540, f).__init__(inputs)
         f.must_file = True
         f.addForm(f)
-
-        for i in f1040.forms:
-            if i.__class__.__name__ == 'F1040sa':
-                f1040sa = i
+        f1040sa = f1040.f1040sa
 
         if inputs['status'] in [FilingStatus.JOINT, FilingStatus.WIDOW]:
             personal = 2
